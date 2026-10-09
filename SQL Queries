@@ -1,0 +1,78 @@
+CREATE DATABASE grama_bazaar;
+USE grama_bazaar;
+CREATE TABLE market_prices (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    district VARCHAR(100),
+    market VARCHAR(255),
+    commodity VARCHAR(100),
+    modal_price DECIMAL(10,2),
+    arrivals DECIMAL(10,2),
+    arrival_date DATE
+);
+SELECT COUNT(*) FROM market_prices;
+
+SELECT * 
+FROM market_prices
+LIMIT 10;
+
+SELECT COUNT(DISTINCT market) AS total_markets
+FROM market_prices;
+
+SELECT DISTINCT commodity
+FROM market_prices;
+
+SELECT market,
+       commodity,
+       MAX(modal_price) AS highest_price
+FROM market_prices
+GROUP BY market, commodity
+ORDER BY highest_price DESC
+LIMIT 10;
+
+SELECT commodity,
+       AVG(modal_price) AS avg_price
+FROM market_prices
+GROUP BY commodity;
+
+SELECT market,
+       SUM(arrivals) AS total_arrivals
+FROM market_prices
+GROUP BY market
+ORDER BY total_arrivals DESC
+LIMIT 10;
+
+SELECT arrival_date,
+       commodity,
+       AVG(modal_price) AS avg_price
+FROM market_prices
+GROUP BY arrival_date, commodity
+ORDER BY arrival_date;
+
+SELECT 
+    a.market AS source_market,
+    b.market AS target_market,
+    a.commodity,
+    a.modal_price AS source_price,
+    b.modal_price AS target_price,
+    (b.modal_price - a.modal_price) AS profit_difference
+FROM market_prices a
+JOIN market_prices b
+ON a.commodity = b.commodity
+AND a.market <> b.market
+WHERE b.modal_price > a.modal_price
+ORDER BY profit_difference DESC
+LIMIT 20;
+
+SELECT commodity, AVG(modal_price)
+FROM market_prices
+GROUP BY commodity;
+
+SELECT market, AVG(modal_price) AS avg_price
+FROM market_prices
+GROUP BY market
+ORDER BY avg_price DESC
+LIMIT 5;
+
+SELECT commodity, SUM(arrivals) AS total_arrivals
+FROM market_prices
+GROUP BY commodity;
